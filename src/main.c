@@ -49,7 +49,7 @@ int main()
 
 	// create queue. print id to make sure
 	queue = snd_seq_alloc_named_queue (handle, "first queue");
-	
+	printf("%i", queue);
 	
 	// run until closed
 	while (1) {

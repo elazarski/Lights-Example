@@ -24,6 +24,9 @@
 
 int main()
 {
+	// pointer for a queue;
+	int queue;
+	
 	// make sure the damn thing will actually run
 	printf("Hello world\n");
 
@@ -44,6 +47,10 @@ int main()
 	// create input port
 	snd_seq_create_simple_port(handle, "Port", SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, SND_SEQ_PORT_TYPE_MIDI_GENERIC);
 
+	// create queue. print id to make sure
+	queue = snd_seq_alloc_named_queue (handle, "first queue");
+	
+	
 	// run until closed
 	while (1) {
 #ifdef WIN32
@@ -58,7 +65,9 @@ int main()
 	if (snd_seq_close(handle)<0) {
 		return 1;
 	}
-	
+
+	// close queue
+	snd_seq_free_queue(handle, queue);
 	return (0);
 }
 

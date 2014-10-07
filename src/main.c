@@ -18,49 +18,74 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <jack/jack.h>
 #include <alsa/asoundlib.h>
+
+snd_seq_t *open_seq();
 
 int main()
 {
 	// pointer for a queue;
 	int queue;
-	
 	// make sure the damn thing will actually run
 	printf("Hello world\n");
 
+	// for getting the notes
+	snd_seq_event_t *ev;
+	int npfd;
+	struct pollfd *pfd;
+	
 	// begin ALSA
 	// *handle is passed to many ALSA functions. It is a sequencer handler type
 	snd_seq_t *handle;
-	int err;
 	
 	//open ALSA sequencer
-	err=snd_seq_open(&handle, "default", SND_SEQ_OPEN_DUPLEX, 0);
-	if (err<0) {
-		return NULL;
-	}
-
+	handle = open_seq();
+	
 	// set ALSA client name
-	snd_seq_set_client_name(handle, "Lights");
+	snd_seq_set_client_name(handle, "Lights Example");
 
 	// create input port
 	snd_seq_create_simple_port(handle, "Port", SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, SND_SEQ_PORT_TYPE_MIDI_GENERIC);
 
 	// create queue. print id to make sure
 	queue = snd_seq_alloc_named_queue (handle, "first queue");
-	printf("%i", queue);
-	
-	// run until closed
-	while (1) {
-#ifdef WIN32
-		Sleep(1000);
-		
-#else
-		sleep(1);
-#endif
-	}
 
+	
+	npfd = snd_seq_poll_descriptors_count (handle, POLLIN);
+	pfd = (struct pollfd *)alloca(npfd * sizeof(struct pollfd));
+	snd_seq_poll_descriptors (handle, pfd, npfd, POLLIN);
+
+	// run until closed ??
+	while (1) {
+		if (poll(pfd, npfd, 100000) > 0) {
+			do {
+				snd_seq_event_input(handle, &ev);
+				switch (ev->type) {
+					case SND_SEQ_EVENT_CONTROLLER:
+						fprintf(stderr, "Control event on channel %2d: %5d    \n",
+						        ev->data.control.channel, ev->data.control.value);
+						break;
+					case SND_SEQ_EVENT_PITCHBEND:
+						fprintf(stderr, "Pitchbender event on channel %2d: %5d    \n",
+						        ev->data.control.channel, ev->data.control.value);
+						break;
+					case SND_SEQ_EVENT_NOTEON:
+						fprintf(stderr, "NOTE ON event on channel %2d: %5d    \n",
+						        ev->data.control.channel, ev->data.note.note);
+						break;
+					case SND_SEQ_EVENT_NOTEOFF:
+						fprintf(stderr, "NOTE OFF event on channel %2d: %5d    \n",
+						        ev->data.control.channel, ev->data.note.note);
+						break;
+				}
+				snd_seq_free_event (ev);
+			} while (snd_seq_event_input_pending(handle, 0) > 0);
+		}
+	}
+	
 	// close sequencer
 	if (snd_seq_close(handle)<0) {
 		return 1;
@@ -71,3 +96,21 @@ int main()
 	return (0);
 }
 
+snd_seq_t *open_seq() {
+
+  snd_seq_t *seq_handle;
+  int portid;
+
+  if (snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_INPUT, 0) < 0) {
+    fprintf(stderr, "Error opening ALSA sequencer.\n");
+    exit(1);
+  }
+  snd_seq_set_client_name(seq_handle, "ALSA Sequencer Demo");
+  if ((portid = snd_seq_create_simple_port(seq_handle, "ALSA Sequencer Demo",
+            SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
+            SND_SEQ_PORT_TYPE_APPLICATION)) < 0) {
+    fprintf(stderr, "Error creating sequencer port.\n");
+    exit(1);
+  }
+  return(seq_handle);
+}

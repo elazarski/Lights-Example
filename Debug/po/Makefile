@@ -23,10 +23,10 @@ VERSION = 0.1
 
 SHELL = /bin/bash
 
-srcdir = /home/eric/Workspace/Amjutalights/po
-top_srcdir = /home/eric/Workspace/Amjutalights
+srcdir = /home/eric/Workspace/Anjuta/Amjutalights/po
+top_srcdir = /home/eric/Workspace/Anjuta/Amjutalights
 top_builddir = ..
-VPATH = /home/eric/Workspace/Amjutalights/po
+VPATH = /home/eric/Workspace/Anjuta/Amjutalights/po
 
 prefix = /usr/local
 exec_prefix = ${prefix}
@@ -36,7 +36,7 @@ libdir = ${exec_prefix}/lib
 DATADIRNAME = share
 itlocaledir = $(prefix)/$(DATADIRNAME)/locale
 subdir = po
-install_sh = ${SHELL} /home/eric/Workspace/Amjutalights/install-sh
+install_sh = ${SHELL} /home/eric/Workspace/Anjuta/Amjutalights/install-sh
 # Automake >= 1.8 provides $(MKDIR_P).
 # Until it can be supposed, use the safe fallback:
 mkdir_p = $(install_sh) -d
@@ -66,7 +66,7 @@ DISTFILES = Makefile.in.in POTFILES.in $(POFILES)
 EXTRA_DISTFILES = ChangeLog POTFILES.skip Makevars LINGUAS
 
 POTFILES = \
-	/home/eric/Workspace/Amjutalights/src/main.c
+	/home/eric/Workspace/Anjuta/Amjutalights/src/main.c
 
 CATALOGS=$(shell LINGUAS="$(USE_LINGUAS)"; for lang in $$LINGUAS; do printf "$$lang.gmo "; done)
 

@@ -1,4 +1,4 @@
-main.o: /home/eric/Workspace/Amjutalights/src/main.c \
+main.o: /home/eric/Workspace/Anjuta/Amjutalights/src/main.c \
  /usr/include/stdc-predef.h /usr/include/stdio.h /usr/include/features.h \
  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -52,7 +52,8 @@ main.o: /home/eric/Workspace/Amjutalights/src/main.c \
  /usr/include/alsa/hwdep.h /usr/include/alsa/control.h \
  /usr/include/alsa/mixer.h /usr/include/alsa/seq_event.h \
  /usr/include/alsa/seq.h /usr/include/alsa/seqmid.h \
- /usr/include/alsa/seq_midi_event.h
+ /usr/include/alsa/seq_midi_event.h \
+ /usr/include/x86_64-linux-gnu/sys/time.h
 
 /usr/include/stdc-predef.h:
 
@@ -221,3 +222,5 @@ main.o: /home/eric/Workspace/Amjutalights/src/main.c \
 /usr/include/alsa/seqmid.h:
 
 /usr/include/alsa/seq_midi_event.h:
+
+/usr/include/x86_64-linux-gnu/sys/time.h:
